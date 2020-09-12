@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable camelcase */
+import React, { useState, FormEvent } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 
 import api from '../../services/api';
@@ -7,15 +8,39 @@ import logoImg from '../../assets/githubLogo.svg';
 
 import { Title, Form, Repositories } from './styles';
 
-const Dashboard: React.FunctionComponent = () => {
-  const [repositories, setRepositories] = useState([]);
+interface Repository {
+  full_name: string;
+  description: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
+}
 
+const Dashboard: React.FunctionComponent = () => {
+  const [newRepo, setNewRepo] = useState('');
+  const [repositories, setRepositories] = useState<Repository[]>([]);
+
+  async function handAddRepository(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
+    event.preventDefault(); // suprimir comportamento padrão do form
+
+    const response = await api.get(`repos/${newRepo}`);
+    const repository = response.data;
+
+    setRepositories([...repositories, repository]);
+  }
   return (
     <>
       <img src={logoImg} alt="GitHub Explorer" />
       <Title>Explore repositórios no Github</Title>
-      <Form>
-        <input placeholder="Digite o nome do repositório" />
+      <Form onSubmit={handAddRepository}>
+        <input
+          value={newRepo}
+          onChange={e => setNewRepo(e.target.value)}
+          placeholder="Digite o nome do repositório"
+        />
         <button type="submit">Pesquisar</button>
       </Form>
       <Repositories>
