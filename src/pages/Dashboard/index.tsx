@@ -4,11 +4,10 @@ import { FiChevronRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
 import api from '../../services/api';
+import Repository from '../Repository';
 
 import logoImg from '../../assets/githubLogo.svg';
-
 import { Title, Form, Repositories, Error } from './styles';
-import Repository from '../Repository';
 
 interface Repository {
   full_name: string;
